@@ -19,22 +19,20 @@ function makePageForEpisodes(episodeList) {
 
     const episodeTitle = document.createElement("h3");
     episodeTitle.textContent = `${episode.name} S${String(episode.season).padStart(2, '0')}E${String(episode.number).padStart(2, '0')}`;
-    
+    episodeCard.appendChild(episodeTitle);
 
     const episodeImage = document.createElement("img");
     episodeImage.src = episode.image ? episode.image.medium : "https://via.placeholder.com/210x295?text=No+Image";
     episodeImage.alt = episode.name;
-    
+    episodeCard.appendChild(episodeImage);
 
     const episodeSummary = document.createElement("p");
     episodeSummary.textContent = episode.summary ? episode.summary.replace(/<[^>]+>/g, "") : "No summary available.";
-  
-
-    episodeCard.appendChild(episodeTitle);
-    episodeCard.appendChild(episodeImage);
     episodeCard.appendChild(episodeSummary);
-    rootElem.appendChild(episodeCard);
 
+    
+    rootElem.appendChild(episodeCard);
   });
 }
+
 window.onload = setup;
