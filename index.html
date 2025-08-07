@@ -2,6 +2,9 @@
 <html lang="en">
   <head>
     <meta charset="UTF-8" />
+    <meta name="description" content="Author: A.N. Author,
+        Illustrator: P. Picture, Category: Books, Price: $17.99,
+        Length: 784 pages">
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <title>TV Show Project | Salah Ahmed (avatarit)</title>
     <link href="style.css" rel="stylesheet" />
@@ -9,14 +12,39 @@
   </head>
 
   <body>
+    <div class="searchContainer" id="searchContainer">
+      <label for="selectedepisode"></label>
+      <select name="selectedepisode" id="selectedepisode">
+        <option value='default'>All Episodes</option>
+      </select>
+      <input  id="search" type="search"   placeholder="Search...">
+      <label for="search"></label>
+      <p title="  Search For Episodes 🔎">Displaying <span id="manyEpisodes"></span> of 73 Episodes</p>
+    </div>
     <div id="root">
     </div>
+<div class="notAvailable" id="notAvailable">
+  <h2>😕 Oops!</h2>
+  <p>We don't have this episode at the moment.</p>
+  <p>Please check back later or try searching for another one.</p>
+</div>
+
+<!-- This is just the intro animation -->
+<div id="intro-animation" class="intro-animation">
+  <div class="core"></div>
+  <div class="particle p1"></div>
+  <div class="particle p2"></div>
+  <div class="particle p3"></div>
+  <div class="particle p4"></div>
+  <div class="particle p5"></div>
+  <div class="particle p6"></div>
+  <div class="particle p7"></div>
+  <div class="particle p8"></div>
+  <h1 class="intro-title">TVMaze STUDIOS</h1>
+</div>
+
 
     <!-- Loads a provided function called getAllEpisodes() which returns all episodes -->
-    <script src="episodes.js"></script>
-
-    <!-- Loads YOUR javascript code -->
-    <script src="script.js"></script>
     <footer>
       <p>
         The data has (originally) come from
@@ -28,5 +56,9 @@
         </a>.
       </p>
     </footer>
+    <script src="episodes.js"></script>
+
+    <!-- Loads YOUR javascript code -->
+    <script src="script.js"></script>
   </body>
 </html>
