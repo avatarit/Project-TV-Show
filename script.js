@@ -6,12 +6,26 @@ const state = {
 };
 
 function setup() {
-  state.allEpisodes = getAllEpisodes();
-  state.filteredEpisodes = state.allEpisodes;
+  showLoadingMessage();
 
-  populateSelect();
-  displayEpisodes();
-  bindEvents();
+  fetch("https://api.tvmaze.com/shows/82/episodes")
+    .then((response) => {
+      if (!response.ok) throw new Error("Failed to load episodes.");
+      return response.json();
+    })
+    .then((episodes) => {
+      hideLoadingMessage();
+
+      state.allEpisodes = episodes;
+      state.filteredEpisodes = episodes;
+
+      populateSelect();
+      displayEpisodes();
+      bindEvents();
+    })
+    .catch((error) => {
+      showErrorMessage("Error loading episodes. Please try again later.");
+    });
 }
 
 function populateSelect() {
@@ -114,6 +128,20 @@ function bindEvents() {
   setTimeout(() => {
     document.getElementById("intro-animation")?.classList.add("hidden");
   }, 1300);
+}
+
+function showLoadingMessage() {
+  document.getElementById("loadingMessage").style.display = "block";
+}
+
+function hideLoadingMessage() {
+  document.getElementById("loadingMessage").style.display = "none";
+}
+
+function showErrorMessage(message) {
+  const errorDiv = document.getElementById("errorMessage");
+  errorDiv.textContent = message;
+  errorDiv.style.display = "block";
 }
 
 window.onload = setup;
