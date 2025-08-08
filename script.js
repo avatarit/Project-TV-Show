@@ -1,131 +1,119 @@
+const state = {
+  allEpisodes: [],
+  filteredEpisodes: [],
+  selected: "default",
+  search: "",
+};
+
 function setup() {
-  const allEpisodes = getAllEpisodes();
-  display(allEpisodes);
-  selectFeature(allEpisodes);
+  state.allEpisodes = getAllEpisodes();
+  state.filteredEpisodes = state.allEpisodes;
+
+  populateSelect();
+  displayEpisodes();
+  bindEvents();
 }
 
-function makePageForEpisodes(episodeList) {
-  // remove and clear any previous elements or classes
-  document.getElementById("notAvailable").style.display = "none";
+function populateSelect() {
+  const select = document.getElementById("selectedepisode");
+  select.innerHTML = `<option value="default">All Episodes</option>`;
 
-  const rootElem = document.getElementById("root");
-  rootElem.innerHTML = ""; // Clear any existing content
-  rootElem.className = "episode-grid"; // Add a class for CSS grid
+  state.allEpisodes.forEach((ep) => {
+    const option = document.createElement("option");
+    option.value = ep.name;
+    option.textContent = `S${String(ep.season).padStart(2, "0")}E${String(
+      ep.number
+    ).padStart(2, "0")} - ${ep.name}`;
+    select.appendChild(option);
+  });
+}
 
-  //const info = document.createElement("p");
-  //info.textContent = `Got ${episodeList.length} episode(s)`;
-  //info.className = "info-text";
-  //rootElem.appendChild(info);
+function displayEpisodes() {
+  const root = document.getElementById("root");
+  const count = document.getElementById("manyEpisodes");
+  const notAvailable = document.getElementById("notAvailable");
 
-  if (episodeList) {
-    episodeList.forEach((episode) => {
-      const episodeCard = document.createElement("div");
-      episodeCard.className = "episode-card";
-      episodeCard.id = episode.name;
+  root.innerHTML = "";
+  root.className = "episode-grid";
 
-      const episodeTitle = document.createElement("h3");
-      episodeTitle.textContent = `${episode.name} S${String(
-        episode.season
-      ).padStart(2, "0")}E${String(episode.number).padStart(2, "0")}`;
-      episodeCard.appendChild(episodeTitle);
-
-      const episodeImage = document.createElement("img");
-      episodeImage.src = episode.image
-        ? episode.image.medium
-        : "https://via.placeholder.com/210x295?text=No+Image";
-      episodeImage.alt = episode.name;
-      episodeCard.appendChild(episodeImage);
-
-      const episodeSummary = document.createElement("p");
-      episodeSummary.textContent = episode.summary
-        ? episode.summary.replace(/<[^>]+>/g, "")
-        : "No summary available.";
-      episodeCard.appendChild(episodeSummary);
-
-      rootElem.appendChild(episodeCard);
-    });
-  } else {
-    document.getElementById("notAvailable").style.display = "block";
+  if (state.filteredEpisodes.length === 0) {
+    notAvailable.style.display = "block";
+    count.textContent = 0;
+    return;
   }
-}
-// filter by select
-function selectFeature(allEpisodes) {
-  const selectedEpisode = document.getElementById("selectedepisode");
 
-  selectedEpisode.addEventListener("change", () => {
-    let selectedEpisodeList = [];
-    const manyEpisodes = document.getElementById("manyEpisodes");
-    allEpisodes.forEach((episode) => {
-      // check which episode the user selected
-      if (episode.name == selectedEpisode.value) {
-        selectedEpisodeList.push(episode);
-        manyEpisodes.textContent = selectedEpisodeList.length;
+  notAvailable.style.display = "none";
+  count.textContent = state.filteredEpisodes.length;
 
-        makePageForEpisodes(selectedEpisodeList);
-      } else if (selectedEpisode.value == "default") {
-        makePageForEpisodes(allEpisodes);
-      }
-    });
-  });
-  // using the DOM to create options
-  allEpisodes.forEach((episode) => {
-    let option = document.createElement("option");
-    option.value = episode.name;
-    option.textContent = `S${String(episode.number).padStart(2, 0)}E${String(
-      episode.season
-    ).padStart(2, 0)} -${episode.name}`;
-    selectedEpisode.appendChild(option);
-  });
-}
-// filtering by search
+  state.filteredEpisodes.forEach((ep) => {
+    const card = document.createElement("div");
+    card.className = "episode-card";
+    card.id = ep.name;
 
-function display(allEpisodes) {
-  // display the default episodes
-  const manyEpisodes = document.getElementById("manyEpisodes");
-  makePageForEpisodes(allEpisodes);
-  manyEpisodes.textContent = 73;
+    const title = document.createElement("h3");
+    title.textContent = `${ep.name} S${String(ep.season).padStart(
+      2,
+      "0"
+    )}E${String(ep.number).padStart(2, "0")}`;
 
-// checking if the episode exists
-  document.getElementById("search").addEventListener("keyup", (evt) => {
-    let searchValue = document.getElementById("search").value.toLowerCase();
-    // display the searched episode
-    if (searchValue == "") {
-      makePageForEpisodes(allEpisodes);
-      manyEpisodes.textContent = 73;
-    } else {
-      let episodeList = [];
-      for (let episode = 0; episode < allEpisodes.length; episode++) {
-        if (
-          allEpisodes[episode].summary.includes(searchValue) ||
-          allEpisodes[episode].name.includes(searchValue)
-        ) {
-          episodeList.push(allEpisodes[episode]);
-          makePageForEpisodes(episodeList);
+    const img = document.createElement("img");
+    img.src = ep.image?.medium || "https://via.placeholder.com/210x295?text=No+Image";
+    img.alt = ep.name;
 
-          manyEpisodes.textContent = episodeList.length;
-        }
-      }
-    }
-    selectFeature(allEpisodes);
+    const summary = document.createElement("p");
+    summary.textContent = ep.summary
+      ? ep.summary.replace(/<[^>]+>/g, "")
+      : "No summary available.";
+
+    card.appendChild(title);
+    card.appendChild(img);
+    card.appendChild(summary);
+    root.appendChild(card);
   });
 }
-// hide the bar when scrolling down
-let preScroll = 0.0;
-window.addEventListener("scroll", () => {
-  let scroll = window.scrollY;
-  if (scroll >= preScroll) {
-    preScroll = scroll;
-    document.getElementById("searchContainer").style.visibility = "hidden";
-  } else {
-    document.getElementById("searchContainer").style.visibility = "visible";
+
+function applyFilters() {
+  const searchText = state.search.toLowerCase();
+  let result = state.allEpisodes;
+
+  if (state.selected !== "default") {
+    result = result.filter((ep) => ep.name === state.selected);
   }
-});
 
-// This is just the intro animation duration
-setTimeout(() => {
-  const introAnimation = document
-    .getElementById("intro-animation")
-    .classList.add("hidden");
-}, 1300);
+  if (searchText) {
+    result = result.filter((ep) => {
+      const name = ep.name.toLowerCase();
+      const summary = ep.summary?.replace(/<[^>]+>/g, "").toLowerCase() || "";
+      return name.includes(searchText) || summary.includes(searchText);
+    });
+  }
+
+  state.filteredEpisodes = result;
+  displayEpisodes();
+}
+
+function bindEvents() {
+  document.getElementById("selectedepisode").addEventListener("change", (e) => {
+    state.selected = e.target.value;
+    applyFilters();
+  });
+
+  document.getElementById("search").addEventListener("input", (e) => {
+    state.search = e.target.value;
+    applyFilters();
+  });
+
+  let lastScroll = 0;
+  window.addEventListener("scroll", () => {
+    const currentScroll = window.scrollY;
+    document.getElementById("searchContainer").style.visibility =
+      currentScroll > lastScroll ? "hidden" : "visible";
+    lastScroll = currentScroll;
+  });
+
+  setTimeout(() => {
+    document.getElementById("intro-animation")?.classList.add("hidden");
+  }, 1300);
+}
 
 window.onload = setup;
