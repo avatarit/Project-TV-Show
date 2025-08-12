@@ -2,66 +2,77 @@
 <html lang="en">
   <head>
     <meta charset="UTF-8" />
-    <meta name="description" content="Author: A.N. Author,
-        Illustrator: P. Picture, Category: Books, Price: $17.99,
-        Length: 784 pages">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
     <title>TV Show Project | Salah Ahmed (avatarit)</title>
-    <link href="style.css" rel="stylesheet" />
     <link rel="icon" href="/favicon.ico" type="image/x-icon" />
+    <link rel="stylesheet" href="style.css" />
   </head>
 
   <body>
     <div class="searchContainer" id="searchContainer">
-      <label for="selectedepisode"></label>
-      <select name="selectedepisode" id="selectedepisode">
-        <option value='default'>All Episodes</option>
+      <!-- Show selector (Level 400) -->
+      <label for="showSelector" class="sr-only">Select show</label>
+      <select id="showSelector">
+        <option value="">Loading shows…</option>
       </select>
-      <input  id="search" type="search"   placeholder="Search...">
-      <label for="search"></label>
-      <p title="  Search For Episodes 🔎">Displaying <span id="manyEpisodes"></span> of 73 Episodes</p>
+
+      <!-- Episode selector -->
+      <label for="episodeSelector" class="sr-only">Select episode</label>
+      <select id="episodeSelector">
+        <option value="all">All Episodes</option>
+      </select>
+
+      <!-- Search -->
+      <label for="search" class="sr-only">Search</label>
+      <input id="search" type="search" placeholder="Search..." />
+
+      <!-- Live counts -->
+      <p title="Search For Episodes 🔎">
+        Displaying <span id="manyEpisodes">0</span> of
+        <span id="totalEpisodes">0</span> Episodes
+      </p>
+
+      <!-- Status messages -->
+      <div id="loadingMessage" style="display:none">Loading…</div>
+      <div id="errorMessage" style="display:none; color:red"></div>
     </div>
-    <div id="root">
+
+    <!-- Episodes grid -->
+    <div id="root"></div>
+
+    <!-- Empty state -->
+    <div class="notAvailable" id="notAvailable" style="display:none;">
+      <h2>😕 Oops!</h2>
+      <p>We don't have this episode at the moment.</p>
+      <p>Please check back later or try searching for another one.</p>
     </div>
-<div class="notAvailable" id="notAvailable">
-  <h2>😕 Oops!</h2>
-  <p>We don't have this episode at the moment.</p>
-  <p>Please check back later or try searching for another one.</p>
-</div>
 
-<div id="loadingMessage" style="text-align:center;">Loading episodes...</div>
-<div id="errorMessage" style="color:red; text-align:center; display:none;"></div>
+    <!-- Optional intro animation (keep/remove as you like) -->
+    <div id="intro-animation" class="intro-animation" style="display:none;">
+      <div class="core"></div>
+      <div class="particle p1"></div>
+      <div class="particle p2"></div>
+      <div class="particle p3"></div>
+      <div class="particle p4"></div>
+      <div class="particle p5"></div>
+      <div class="particle p6"></div>
+      <div class="particle p7"></div>
+      <div class="particle p8"></div>
+      <h1 class="intro-title">TVMaze STUDIOS</h1>
+    </div>
 
-<!-- This is just the intro animation -->
-<div id="intro-animation" class="intro-animation">
-  <div class="core"></div>
-  <div class="particle p1"></div>
-  <div class="particle p2"></div>
-  <div class="particle p3"></div>
-  <div class="particle p4"></div>
-  <div class="particle p5"></div>
-  <div class="particle p6"></div>
-  <div class="particle p7"></div>
-  <div class="particle p8"></div>
-  <h1 class="intro-title">TVMaze STUDIOS</h1>
-</div>
+    <!-- App script (no episodes.js at Level 400) -->
+    <script src="script.js"></script>
 
-
-    <!-- Loads a provided function called getAllEpisodes() which returns all episodes -->
     <footer>
       <p>
-        The data has (originally) come from
-        <a href="https://tvmaze.com/" target="_blank">TVMaze.com</a>,
-        and link back to that site (or the specific episode on that site).
-        See the licensing details at
-        <a href="https://www.tvmaze.com/api#licensing" target="_blank">
+        Data originally from
+        <a href="https://www.tvmaze.com" target="_blank" rel="noopener">TVMaze.com</a>.
+        See licensing at
+        <a href="https://www.tvmaze.com/api#licensing" target="_blank" rel="noopener">
           tvmaze.com/api#licensing
         </a>.
       </p>
     </footer>
-
-
-    <!-- Loads YOUR javascript code -->
-    <script src="script.js"></script>
   </body>
 </html>
