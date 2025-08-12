@@ -9,45 +9,51 @@
   </head>
 
   <body>
-    <div class="searchContainer" id="searchContainer">
-      <!-- Show selector (Level 400) -->
-      <label for="showSelector" class="sr-only">Select show</label>
-      <select id="showSelector">
-        <option value="">Loading shows…</option>
-      </select>
+    <!-- SHOWS VIEW (default) -->
+    <section id="showsView">
+      <div class="toolbar">
+        <label for="showSearch" class="sr-only">Search shows</label>
+        <input id="showSearch" type="search" placeholder="Search shows by name, genre, or summary..." />
+        <p>
+          Showing <span id="showCount">0</span> of <span id="showTotal">0</span> shows
+        </p>
+        <div id="loadingMessage" style="display:none">Loading…</div>
+        <div id="errorMessage" style="display:none;color:red"></div>
+      </div>
 
-      <!-- Episode selector -->
-      <label for="episodeSelector" class="sr-only">Select episode</label>
-      <select id="episodeSelector">
-        <option value="all">All Episodes</option>
-      </select>
+      <div id="showsRoot" class="shows-grid"></div>
+    </section>
 
-      <!-- Search -->
-      <label for="search" class="sr-only">Search</label>
-      <input id="search" type="search" placeholder="Search..." />
+    <!-- EPISODES VIEW -->
+    <section id="episodesView" style="display:none;">
+      <nav class="nav-back">
+        <a href="#" id="backToShows">← All shows</a>
+      </nav>
 
-      <!-- Live counts -->
-      <p title="Search For Episodes 🔎">
-        Displaying <span id="manyEpisodes">0</span> of
-        <span id="totalEpisodes">0</span> Episodes
-      </p>
+      <div class="toolbar" id="episodesToolbar">
+        <label for="episodeSelector" class="sr-only">Select episode</label>
+        <select id="episodeSelector">
+          <option value="all">All Episodes</option>
+        </select>
 
-      <!-- Status messages -->
-      <div id="loadingMessage" style="display:none">Loading…</div>
-      <div id="errorMessage" style="display:none; color:red"></div>
-    </div>
+        <label for="episodeSearch" class="sr-only">Search episodes</label>
+        <input id="episodeSearch" type="search" placeholder="Search episodes..." />
 
-    <!-- Episodes grid -->
-    <div id="root"></div>
+        <p>
+          Displaying <span id="manyEpisodes">0</span> of
+          <span id="totalEpisodes">0</span> episodes
+        </p>
+      </div>
 
-    <!-- Empty state -->
-    <div class="notAvailable" id="notAvailable" style="display:none;">
-      <h2>😕 Oops!</h2>
-      <p>We don't have this episode at the moment.</p>
-      <p>Please check back later or try searching for another one.</p>
-    </div>
+      <div id="episodesRoot" class="episode-grid"></div>
 
-    <!-- Optional intro animation (keep/remove as you like) -->
+      <div class="notAvailable" id="notAvailable" style="display:none;">
+        <h2>😕 Oops!</h2>
+        <p>No episodes match your filters.</p>
+      </div>
+    </section>
+
+    <!-- Optional intro animation -->
     <div id="intro-animation" class="intro-animation" style="display:none;">
       <div class="core"></div>
       <div class="particle p1"></div>
@@ -61,7 +67,6 @@
       <h1 class="intro-title">TVMaze STUDIOS</h1>
     </div>
 
-    <!-- App script (no episodes.js at Level 400) -->
     <script src="script.js"></script>
 
     <footer>
