@@ -1,303 +1,120 @@
-/* --------------------------
-   Base + Theme
---------------------------- */
+/* ---------- Base / variables ---------- */
 :root {
-  --bg: #0f1115;
-  --panel: #161a21;
-  --text: #e7eaf0;
-  --muted: #a7b0c0;
-  --primary: #7cc0ff;
-  --accent: #8ee1b7;
-  --danger: #ff7a7a;
-
-  --radius: 14px;
-  --shadow: 0 6px 24px rgba(0, 0, 0, 0.25);
-  --ring: 0 0 0 3px rgba(124, 192, 255, 0.35);
+  --bg: #ffffff;
+  --fg: #0f172a;             /* slate-900 */
+  --muted: #334155;          /* slate-700 */
+  --border: #e5e7eb;         /* slate-200 */
+  --card-bg: #ffffff;
+  --link: #0a58ca;           /* accessible blue */
+  --link-visited: #6f42c1;
+  --focus: #ffab00;          /* amber for high-contrast ring */
+  --accent: #f1f5f9;         /* slate-100 */
 }
 
-@media (prefers-color-scheme: light) {
-  :root {
-    --bg: #f6f7fb;
-    --panel: #ffffff;
-    --text: #1b2230;
-    --muted: #5e6b82;
-    --primary: #246bff;
-    --accent: #0f9d6e;
-    --danger: #d53f3f;
-    --shadow: 0 6px 20px rgba(22, 32, 60, 0.08);
-    --ring: 0 0 0 3px rgba(36, 107, 255, 0.2);
-  }
-}
-
-*,
-*::before,
-*::after { box-sizing: border-box; }
-
+* { box-sizing: border-box; }
 html, body {
-  height: 100%;
-}
-
-body {
   margin: 0;
-  font-family: ui-sans-serif, system-ui, -apple-system, Segoe UI, Roboto, Helvetica, Arial, "Apple Color Emoji", "Segoe UI Emoji";
-  background: radial-gradient(1200px 800px at 20% -10%, rgba(124,192,255,.08), transparent 60%),
-              radial-gradient(900px 600px at 110% 20%, rgba(142,225,183,.08), transparent 60%),
-              var(--bg);
-  color: var(--text);
-  line-height: 1.55;
-  -webkit-font-smoothing: antialiased;
-  text-rendering: optimizeLegibility;
+  padding: 0;
+  background: var(--bg);
+  color: var(--fg);
+  font: 16px/1.5 system-ui, -apple-system, Segoe UI, Roboto, "Helvetica Neue",
+        Noto Sans, "Liberation Sans", Arial, sans-serif, "Apple Color Emoji",
+        "Segoe UI Emoji";
 }
 
-img { max-width: 100%; display: block; }
-
+/* ---------- Links: distinguishable and accessible ---------- */
 a {
-  color: var(--primary);
-  text-decoration: none;
+  color: var(--link);
+  text-decoration: underline;             /* fixes “links rely on color” */
+  text-underline-offset: 2px;
 }
-a:hover { text-decoration: underline; }
+a:visited { color: var(--link-visited); }
+a:hover, a:focus { text-decoration-thickness: 2px; }
 
-/* Accessible visually-hidden label helper */
-.sr-only {
-  position: absolute !important;
-  width: 1px; height: 1px;
-  padding: 0; margin: -1px;
-  overflow: hidden; clip: rect(0,0,0,0);
-  white-space: nowrap; border: 0;
+/* Visible focus for all interactive elements */
+:focus-visible {
+  outline: 3px solid var(--focus);
+  outline-offset: 3px;
 }
 
-/* --------------------------
-   Toolbars
---------------------------- */
-.toolbar,
-#searchContainer {
-  position: sticky;
-  top: 0;
-  z-index: 50;
+/* ---------- Layout ---------- */
+main { max-width: 1200px; margin: 0 auto; padding: 1rem; }
+.toolbar {
   display: flex;
   flex-wrap: wrap;
-  align-items: center;
   gap: .75rem 1rem;
-  padding: .85rem 1rem;
-  background: color-mix(in oklab, var(--panel) 85%, transparent);
-  backdrop-filter: saturate(1.2) blur(8px);
-  border-bottom: 1px solid color-mix(in oklab, var(--muted) 18%, transparent);
+  align-items: center;
+  margin-bottom: 1rem;
+  background: var(--bg);
+  color: var(--fg);
 }
-
-.toolbar p,
-#searchContainer p {
-  margin: 0 0 0 auto;
-  font-size: .95rem;
-  color: var(--muted);
-}
-
-/* Inputs */
-input[type="search"],
-select {
-  appearance: none;
-  border: 1px solid color-mix(in oklab, var(--muted) 25%, transparent);
-  background: var(--panel);
-  color: var(--text);
-  padding: .6rem .8rem;
-  border-radius: 10px;
-  outline: none;
-  box-shadow: none;
-  transition: border-color .15s ease, box-shadow .15s ease, transform .05s ease;
-}
-
-select { padding-right: 2rem; background-image:
-  linear-gradient(45deg, transparent 50%, var(--muted) 50%),
-  linear-gradient(135deg, var(--muted) 50%, transparent 50%),
-  linear-gradient(to right, transparent, transparent);
-background-position:
-  calc(100% - 16px) calc(50% - 3px),
-  calc(100% - 11px) calc(50% - 3px),
-  calc(100% - 2.2rem) 0.5rem;
-background-size: 5px 5px, 5px 5px, 1px 1.8rem;
-background-repeat: no-repeat;
-}
-
-input[type="search"]:focus,
-select:focus {
-  border-color: var(--primary);
-  box-shadow: var(--ring);
-}
-
-input[type="search"]:active,
-select:active { transform: translateY(0.5px); }
-
-/* Status messages */
-#loadingMessage { color: var(--muted); }
-#errorMessage { color: var(--danger) !important; }
-
-/* --------------------------
-   Layout grids
---------------------------- */
-.shows-grid,
-.episode-grid {
-  width: min(1200px, 92vw);
-  margin: 1.2rem auto 3rem;
-  display: grid;
-  grid-template-columns: repeat(auto-fill, minmax(260px, 1fr));
-  gap: 1.1rem;
-}
-
-/* --------------------------
-   Show cards
---------------------------- */
-.show-card {
-  background: var(--panel);
-  border: 1px solid color-mix(in oklab, var(--muted) 18%, transparent);
-  border-radius: var(--radius);
-  box-shadow: var(--shadow);
-  overflow: hidden;
-  transition: transform .12s ease, box-shadow .2s ease, border-color .2s ease;
-}
-
-.show-card:hover {
-  transform: translateY(-2px);
-  box-shadow: 0 10px 28px rgba(0,0,0,.28);
-  border-color: color-mix(in oklab, var(--primary) 30%, transparent);
-}
-
-.show-card h2 {
-  margin: 0;
-  font-size: 1.05rem;
-  padding: .85rem 1rem;
-  border-bottom: 1px solid color-mix(in oklab, var(--muted) 14%, transparent);
-}
-
-.show-card h2 a { text-decoration: none; }
-.show-card h2 a:hover { text-decoration: underline; }
-
-.show-meta {
-  display: grid;
-  grid-template-columns: 150px 1fr;
-  gap: 1rem;
-  padding: 1rem;
-}
-
-.show-meta img {
-  width: 100%;
-  aspect-ratio: 2 / 3;
-  object-fit: cover;
-  border-radius: 10px;
-  border: 1px solid color-mix(in oklab, var(--muted) 18%, transparent);
-}
-
-.show-info { display: grid; gap: .5rem; }
-
-.show-summary {
-  margin: 0;
-  color: var(--text);
-  opacity: .9;
-  display: -webkit-box;
-  -webkit-line-clamp: 4;
-  -webkit-box-orient: vertical;
-  overflow: hidden;
-}
-
-.show-info p {
-  margin: 0;
-  color: var(--muted);
-  font-size: .95rem;
-}
-
-/* --------------------------
-   Episodes
---------------------------- */
-.nav-back {
-  width: min(1200px, 92vw);
-  margin: 1rem auto 0.5rem;
-}
-.nav-back a {
-  display: inline-block;
+.toolbar input[type="search"],
+.toolbar select {
+  border: 1px solid var(--border);
+  border-radius: 8px;
   padding: .5rem .75rem;
-  border-radius: 10px;
-  background: color-mix(in oklab, var(--primary) 8%, transparent);
-  border: 1px solid color-mix(in oklab, var(--primary) 22%, transparent);
+  min-width: 240px;
 }
-.nav-back a:hover { text-decoration: none; background: color-mix(in oklab, var(--primary) 12%, transparent); }
+.counter { margin-left: auto; }
 
-.episode-card {
-  background: var(--panel);
-  border: 1px solid color-mix(in oklab, var(--muted) 18%, transparent);
-  border-radius: var(--radius);
-  box-shadow: var(--shadow);
-  padding: 1rem;
+.shows-grid, .episode-grid {
   display: grid;
-  gap: .75rem;
-  transition: transform .12s ease, box-shadow .2s ease, border-color .2s ease;
+  gap: 1rem;
+  grid-template-columns: repeat(auto-fill, minmax(230px, 1fr));
 }
 
-.episode-card:hover {
-  transform: translateY(-2px);
-  box-shadow: 0 10px 28px rgba(0,0,0,.28);
-  border-color: color-mix(in oklab, var(--accent) 28%, transparent);
+/* Cards */
+.show-card, .episode-card {
+  background: var(--card-bg);
+  border: 1px solid var(--border);
+  border-radius: 12px;
+  padding: 12px;
 }
-
+.show-card h2,
 .episode-card h3 {
-  margin: 0 0 .25rem;
-  font-size: 1rem;
+  margin: 0 0 .5rem 0;
+  font-size: 1.05rem;
 }
 
-.episode-card a img {
+/* Image area: avoid CLS with a fixed aspect ratio box */
+.show-card img, .episode-card img {
+  display: block;
   width: 100%;
-  aspect-ratio: 2 / 3;
+  height: auto;
+  aspect-ratio: 210 / 295; /* TVMaze medium is typically 210x295 */
   object-fit: cover;
-  border-radius: 10px;
-  border: 1px solid color-mix(in oklab, var(--muted) 18%, transparent);
+  border-radius: 8px;
 }
 
-.episode-card p {
-  margin: 0;
-  color: var(--muted);
-  font-size: .95rem;
+/* Back nav */
+.nav-back { margin: .5rem 0 1rem; }
+
+/* Alerts / helpers */
+.help-text { color: var(--muted); margin: 0; font-size: .875rem; }
+.no-js {
+  margin: 1rem 0;
+  padding: .75rem 1rem;
+  background: #fff3cd;
+  color: #664d03;
+  border: 1px solid #ffecb5;
+  border-radius: 8px;
 }
 
-/* Empty state */
-.notAvailable {
-  width: min(900px, 92vw);
-  margin: 2rem auto 4rem;
-  background: color-mix(in oklab, var(--danger) 8%, var(--panel));
-  border: 1px solid color-mix(in oklab, var(--danger) 20%, transparent);
-  color: var(--text);
-  border-radius: var(--radius);
-  padding: 1.2rem 1rem;
-  text-align: center;
+/* Screen-reader only utility */
+.sr-only {
+  position: absolute; width: 1px; height: 1px; padding: 0; margin: -1px;
+  overflow: hidden; clip: rect(0 0 0 0); white-space: nowrap; border: 0;
 }
 
-/* --------------------------
-   Footer
---------------------------- */
-footer {
-  width: min(1100px, 92vw);
-  margin: 2rem auto 3rem;
-  color: var(--muted);
-  font-size: .95rem;
-}
-footer a { color: var(--primary); }
-
-/* --------------------------
-   Responsive tweaks
---------------------------- */
-@media (max-width: 760px) {
-  .show-meta { grid-template-columns: 1fr; }
-  .shows-grid,
-  .episode-grid { grid-template-columns: 1fr; }
-  .toolbar,
-  #searchContainer { gap: .65rem .8rem; }
-}
-
-@media (min-width: 1500px) {
-  .shows-grid,
-  .episode-grid { width: min(1400px, 92vw); }
-}
-
-/* --------------------------
-   Motion preferences
---------------------------- */
+/* Respect reduced motion */
 @media (prefers-reduced-motion: reduce) {
   * { animation: none !important; transition: none !important; }
-  .toolbar { backdrop-filter: none; }
+}
+
+/* Optional intro animation minimal guard */
+.intro-animation { pointer-events: none; }
+
+/* Small devices */
+@media (max-width: 480px) {
+  .counter { width: 100%; order: 3; margin-left: 0; }
 }

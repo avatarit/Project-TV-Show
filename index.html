@@ -2,72 +2,146 @@
 <html lang="en">
   <head>
     <meta charset="UTF-8" />
-    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <meta
+      name="viewport"
+      content="width=device-width, initial-scale=1"
+    />
+    <meta name="color-scheme" content="light only" />
     <title>TV Show Project | Salah Ahmed (avatarit)</title>
     <link rel="icon" href="/favicon.ico" type="image/x-icon" />
+
+    <!-- Perf: preconnect to data + image origins -->
+    <link rel="preconnect" href="https://api.tvmaze.com" crossorigin>
+    <link rel="preconnect" href="https://static.tvmaze.com" crossorigin>
+
     <link rel="stylesheet" href="style.css" />
   </head>
 
   <body>
-    <!-- SHOWS VIEW (default) -->
-    <section id="showsView">
-      <div class="toolbar">
-        <label for="showSearch" class="sr-only">Search shows</label>
-        <input id="showSearch" type="search" placeholder="Search shows by name, genre, or summary..." />
-        <p>
-          Showing <span id="showCount">0</span> of <span id="showTotal">0</span> shows
-        </p>
-        <div id="loadingMessage" style="display:none">Loading…</div>
-        <div id="errorMessage" style="display:none;color:red"></div>
+    <a class="sr-only" href="#showsRoot">Skip to content</a>
+
+    <main id="app" role="main">
+      <!-- SHOWS VIEW (default) -->
+      <section id="showsView" aria-labelledby="showsHeading">
+        <h1 id="showsHeading" class="sr-only">TV Shows</h1>
+
+        <div class="toolbar">
+          <label for="showSearch" class="sr-only">Search shows</label>
+          <input
+            id="showSearch"
+            type="search"
+            placeholder="Search shows by name, genre, or summary…"
+            autocomplete="off"
+            aria-describedby="showsHelp"
+          />
+          <p id="showsHelp" class="help-text">
+            Type to filter the shows list.
+          </p>
+
+          <p class="counter">
+            Showing
+            <span id="showCount" aria-live="polite">0</span>
+            of
+            <span id="showTotal" aria-live="polite">0</span>
+            shows
+          </p>
+
+          <!-- Reserve space to avoid CLS -->
+          <div class="status-row">
+            <div
+              id="loadingMessage"
+              role="status"
+              aria-live="polite"
+              aria-atomic="true"
+              style="display:none"
+            >
+              Loading…
+            </div>
+            <div
+              id="errorMessage"
+              role="alert"
+              aria-atomic="true"
+              style="display:none;color:#b00020"
+            ></div>
+          </div>
+        </div>
+
+        <!-- Removed role="list" -->
+        <div id="showsRoot" class="shows-grid"></div>
+      </section>
+
+      <!-- EPISODES VIEW -->
+      <section
+        id="episodesView"
+        style="display:none;"
+        aria-labelledby="episodesHeading"
+      >
+        <h2 id="episodesHeading" class="sr-only">Episodes</h2>
+
+        <nav class="nav-back" aria-label="Back">
+          <a href="#" id="backToShows" aria-label="Back to all shows">← All shows</a>
+        </nav>
+
+        <div class="toolbar" id="episodesToolbar">
+          <label for="episodeSelector" class="sr-only">Select episode</label>
+          <select id="episodeSelector">
+            <option value="all">All Episodes</option>
+          </select>
+
+          <label for="episodeSearch" class="sr-only">Search episodes</label>
+          <input
+            id="episodeSearch"
+            type="search"
+            placeholder="Search episodes…"
+            autocomplete="off"
+          />
+
+          <p class="counter">
+            Displaying
+            <span id="manyEpisodes" aria-live="polite">0</span>
+            of
+            <span id="totalEpisodes" aria-live="polite">0</span>
+            episodes
+          </p>
+        </div>
+
+        <!-- Removed role="list" -->
+        <div id="episodesRoot" class="episode-grid"></div>
+
+        <div
+          class="notAvailable"
+          id="notAvailable"
+          role="status"
+          aria-live="polite"
+          style="display:none;"
+        >
+          <h3>😕 Oops!</h3>
+          <p>No episodes match your filters.</p>
+        </div>
+      </section>
+
+      <!-- Optional intro animation -->
+      <div id="intro-animation" class="intro-animation" style="display:none;">
+        <div class="core"></div>
+        <div class="particle p1"></div>
+        <div class="particle p2"></div>
+        <div class="particle p3"></div>
+        <div class="particle p4"></div>
+        <div class="particle p5"></div>
+        <div class="particle p6"></div>
+        <div class="particle p7"></div>
+        <div class="particle p8"></div>
+        <h2 class="intro-title">TVMaze STUDIOS</h2>
       </div>
+    </main>
 
-      <div id="showsRoot" class="shows-grid"></div>
-    </section>
+    <noscript>
+      <p class="no-js">
+        This app needs JavaScript to load shows and episodes.
+      </p>
+    </noscript>
 
-    <!-- EPISODES VIEW -->
-    <section id="episodesView" style="display:none;">
-      <nav class="nav-back">
-        <a href="#" id="backToShows">← All shows</a>
-      </nav>
-
-      <div class="toolbar" id="episodesToolbar">
-        <label for="episodeSelector" class="sr-only">Select episode</label>
-        <select id="episodeSelector">
-          <option value="all">All Episodes</option>
-        </select>
-
-        <label for="episodeSearch" class="sr-only">Search episodes</label>
-        <input id="episodeSearch" type="search" placeholder="Search episodes..." />
-
-        <p>
-          Displaying <span id="manyEpisodes">0</span> of
-          <span id="totalEpisodes">0</span> episodes
-        </p>
-      </div>
-
-      <div id="episodesRoot" class="episode-grid"></div>
-
-      <div class="notAvailable" id="notAvailable" style="display:none;">
-        <h2>😕 Oops!</h2>
-        <p>No episodes match your filters.</p>
-      </div>
-    </section>
-
-    <!-- Optional intro animation -->
-    <div id="intro-animation" class="intro-animation" style="display:none;">
-      <div class="core"></div>
-      <div class="particle p1"></div>
-      <div class="particle p2"></div>
-      <div class="particle p3"></div>
-      <div class="particle p4"></div>
-      <div class="particle p5"></div>
-      <div class="particle p6"></div>
-      <div class="particle p7"></div>
-      <div class="particle p8"></div>
-      <h1 class="intro-title">TVMaze STUDIOS</h1>
-    </div>
-
-    <script src="script.js"></script>
+    <script src="script.js" defer></script>
 
     <footer>
       <p>

@@ -1,3 +1,7 @@
+// ==============================
+// TV Show App — script.js (a11y fix)
+// ==============================
+
 // -------------------- State --------------------
 const state = {
   // shows view
@@ -47,17 +51,25 @@ const notAvailable = document.getElementById("notAvailable");
 
 // -------------------- Utilities --------------------
 function showLoading(msg = "Loading…") {
+  if (!loadingEl) return;
   loadingEl.style.display = "block";
   loadingEl.textContent = msg;
+  const region = state.currentShowId ? episodesRoot : showsRoot;
+  region?.setAttribute("aria-busy", "true");
 }
 function hideLoading() {
+  if (!loadingEl) return;
   loadingEl.style.display = "none";
+  const region = state.currentShowId ? episodesRoot : showsRoot;
+  region?.setAttribute("aria-busy", "false");
 }
 function showError(msg) {
+  if (!errorEl) return;
   errorEl.style.display = "block";
   errorEl.textContent = msg;
 }
 function clearError() {
+  if (!errorEl) return;
   errorEl.style.display = "none";
   errorEl.textContent = "";
 }
@@ -75,7 +87,19 @@ function sortShowsAlpha(shows) {
   );
 }
 function mins(v) {
-  return typeof v === "number" && !Number.isNaN(v) ? `${v} min` : "–";
+  const n = Number(v);
+  return Number.isFinite(n) ? `${n} min` : "–";
+}
+
+// --- Fixed-length summary settings ---
+const SUMMARY_MAX_CHARS = 220; // adjust as you like
+function clampChars(text, max = SUMMARY_MAX_CHARS) {
+  const t = (text || "").replace(/\s+/g, " ").trim();
+  if (t.length <= max) return t;
+  const slice = t.slice(0, max - 1);
+  const lastSpace = slice.lastIndexOf(" ");
+  const base = lastSpace > 40 ? slice.slice(0, lastSpace) : slice;
+  return base.replace(/[.,;:!?]$/, "") + "…";
 }
 
 // -------------------- Data --------------------
@@ -93,13 +117,16 @@ function renderShows(list) {
   showTotalEl.textContent = String(state.shows.length);
 
   list.forEach((show) => {
+    // Use native <article> semantics; DO NOT override with role=listitem
     const card = document.createElement("article");
     card.className = "show-card";
 
     const title = document.createElement("h2");
+
     const titleLink = document.createElement("a");
     titleLink.href = "#";
     titleLink.textContent = show.name;
+    titleLink.setAttribute("aria-label", `View episodes for ${show.name}`);
     titleLink.addEventListener("click", (e) => {
       e.preventDefault();
       enterEpisodesView(show.id);
@@ -109,20 +136,32 @@ function renderShows(list) {
     const meta = document.createElement("div");
     meta.className = "show-meta";
 
+    // Make image clickable & keyboard-activatable
+    const imgLink = document.createElement("a");
+    imgLink.href = "#";
+    imgLink.setAttribute("aria-label", `View episodes for ${show.name}`);
+    imgLink.addEventListener("click", (e) => { e.preventDefault(); enterEpisodesView(show.id); });
+
     const img = document.createElement("img");
-    img.alt = show.name;
+    img.alt = show.name || "Show image";
+    img.loading = "lazy";
+    img.width = 210;
+    img.height = 295;
     img.src =
       show.image?.medium ||
       show.image?.original ||
       "https://via.placeholder.com/210x295?text=No+Image";
+    imgLink.appendChild(img);
 
     const info = document.createElement("div");
     info.className = "show-info";
 
+    // Fixed character length summary
+    const fullShowSummary = stripHtml(show.summary) || "No summary available.";
     const summary = document.createElement("p");
     summary.className = "show-summary";
-    // Keep a little HTML or strip? Requirement only says present summary, so plain text is fine.
-    summary.textContent = stripHtml(show.summary) || "No summary available.";
+    summary.textContent = clampChars(fullShowSummary);
+    summary.title = fullShowSummary;
 
     const genres = document.createElement("p");
     genres.innerHTML = `<strong>Genres:</strong> ${show.genres?.join(", ") || "–"}`;
@@ -133,9 +172,8 @@ function renderShows(list) {
     const rating = document.createElement("p");
     rating.innerHTML = `<strong>Rating:</strong> ${show.rating?.average ?? "–"}`;
 
-    const runtime = document.createElement("p");
-    // Some shows use averageRuntime; fall back appropriately.
     const rt = show.runtime ?? show.averageRuntime;
+    const runtime = document.createElement("p");
     runtime.innerHTML = `<strong>Runtime:</strong> ${mins(rt)}`;
 
     info.appendChild(summary);
@@ -144,7 +182,7 @@ function renderShows(list) {
     info.appendChild(rating);
     info.appendChild(runtime);
 
-    meta.appendChild(img);
+    meta.appendChild(imgLink);
     meta.appendChild(info);
 
     card.appendChild(title);
@@ -172,6 +210,8 @@ function applyShowSearch() {
 function showShowsView() {
   episodesView.style.display = "none";
   showsView.style.display = "block";
+  episodesRoot.innerHTML = ""; // tidy
+  window.scrollTo({ top: 0, behavior: "smooth" });
 }
 
 // -------------------- Episodes View --------------------
@@ -187,13 +227,14 @@ async function enterEpisodesView(showId) {
     state.filteredEpisodes = episodes;
     state.selectedEpisodeCode = "all";
     state.episodeSearch = "";
-    episodeSearchInput.value = "";
+    if (episodeSearchInput) episodeSearchInput.value = "";
 
     populateEpisodeSelector(episodes);
     renderEpisodes(episodes);
 
     showsView.style.display = "none";
     episodesView.style.display = "block";
+    window.scrollTo({ top: 0, behavior: "smooth" });
   } catch (e) {
     console.error(e);
     showError("Failed to load episodes. Please try again.");
@@ -232,7 +273,8 @@ function renderEpisodes(list) {
   notAvailable.style.display = "none";
 
   list.forEach((ep) => {
-    const card = document.createElement("div");
+    // Use native <article> semantics; DO NOT override with role=listitem
+    const card = document.createElement("article");
     card.className = "episode-card";
     card.id = episodeCode(ep);
 
@@ -242,17 +284,25 @@ function renderEpisodes(list) {
     const a = document.createElement("a");
     a.href = ep.url;
     a.target = "_blank";
+    a.rel = "noopener";
 
     const img = document.createElement("img");
-    img.alt = ep.name ?? "Episode";
+    img.alt = ep.name ?? "Episode image";
+    img.loading = "lazy";
+    img.width = 210;
+    img.height = 295;
     img.src =
       ep.image?.medium ||
       ep.image?.original ||
       "https://via.placeholder.com/210x295?text=No+Image";
     a.appendChild(img);
 
+    // Fixed character length summary
+    const fullEpSummary = stripHtml(ep.summary) || "No summary available.";
     const p = document.createElement("p");
-    p.textContent = stripHtml(ep.summary) || "No summary available.";
+    p.className = "episode-summary";
+    p.textContent = clampChars(fullEpSummary);
+    p.title = fullEpSummary;
 
     card.appendChild(h3);
     card.appendChild(a);
@@ -312,6 +362,7 @@ function bindEvents() {
   // Optional: hide toolbars on scroll down (episodes only)
   let lastScroll = 0;
   window.addEventListener("scroll", () => {
+    if (episodesView.style.display === "none") return;
     const current = window.scrollY;
     const toolbars = document.querySelectorAll(".toolbar");
     toolbars.forEach((tb) => {
