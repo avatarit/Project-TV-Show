@@ -1,7 +1,7 @@
-
-*{
+* {
   box-sizing: border-box;
 }
+
 #root {
   padding: 20px;
   font-family: Arial, sans-serif;
@@ -23,7 +23,7 @@
   border: 1px solid #ddd;
   border-radius: 8px;
   padding: 15px;
-  box-shadow: 0 2px 8px rgba(0,0,0,0.1);
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
   transition: transform 0.2s;
 }
 
@@ -50,16 +50,18 @@
   text-align: justify;
   line-height: 1.5;
 }
+
 ::placeholder {
   color: rgba(0, 0, 0, 0.599);
-  font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+  font-family: "Segoe UI", Tahoma, Geneva, Verdana, sans-serif;
   font-weight: 500;
 }
+
 /* search container */
 .searchContainer {
   display: flex;
   align-items: center;
-  justify-content:center;
+  justify-content: center;
   gap: 15px;
   background-color: #febfbf;
   padding: 10px;
@@ -67,18 +69,19 @@
   position: sticky;
   top: 0;
   z-index: 10;
-  margin:0 -7px ;
+  margin: 0 -7px;
   animation: curtainDrop 1s ease-out forwards;
-  transition: .3s;
+  transition: 0.3s;
 }
-@media (max-width:768px) {
+
+@media (max-width: 768px) {
   .searchContainer {
     flex-direction: column;
   }
 }
 
 /* select bar  */
-.searchContainer #selectedepisode {
+.searchContainer .showSelector {
   padding: 10px 15px;
   font-size: 16px;
   border: 1px solid #ccc;
@@ -94,7 +97,8 @@
 option {
   color: rgb(1, 54, 46);
 }
-.searchContainer #selectedepisode:focus {
+
+.searchContainer .showSelector:focus {
   outline: none;
   border: #7ee4c4 2px solid;
 }
@@ -102,24 +106,26 @@ option {
 /* Search bar  */
 .searchContainer #search {
   padding: 15px;
-  width: 250px;
+  width: 200px;
   height: 40px;
   border-radius: 5px;
   border: none;
   text-align: center;
 }
 
-.searchContainer #search:focus{
+.searchContainer #search:focus {
   outline: none;
   border: #7ee4c4 2px solid;
   background-color: #ffffff;
 }
+
 .searchContainer p {
   font-size: large;
-  border-bottom: 3px solid rgb(218, 123, 123) ;
+  border-bottom: 3px solid rgb(218, 123, 123);
   cursor: pointer;
 }
-.searchContainer #manyEpisodes{
+
+.searchContainer #manyEpisodes {
   text-decoration: underline;
 }
 
@@ -139,7 +145,7 @@ option {
   align-items: center;
   overflow: hidden;
   color: #00ffe1;
-  font-family: 'Orbitron', sans-serif;
+  font-family: "Orbitron", sans-serif;
 }
 
 .core {
@@ -159,7 +165,7 @@ option {
   opacity: 0.8;
   z-index: 1;
   border-radius: 50%;
-  animation: assemble .800s ease-in forwards;
+  animation: assemble 0.8s ease-in forwards;
 }
 
 .p1 {
@@ -224,7 +230,7 @@ option {
   letter-spacing: 0.12em;
   margin-top: 30px;
   opacity: 0;
-  animation: fadeInTitle .2s ease-in .8s forwards;
+  animation: fadeInTitle 0.2s ease-in 0.8s forwards;
 }
 
 @keyframes fadeInTitle {
@@ -232,6 +238,7 @@ option {
     opacity: 1;
   }
 }
+
 /* no episode was found (not available) */
 #notAvailable {
   display: none;
@@ -243,7 +250,7 @@ option {
   text-align: center;
   font-family: Arial, sans-serif;
   color: #444;
-  animation: fadeIn 0.8s .2s ease-out forwards;
+  animation: fadeIn 0.8s 0.2s ease-out forwards;
   opacity: 0;
 }
 
@@ -264,6 +271,3 @@ option {
     transform: translateY(0);
   }
 }
-
-/* test */
-
