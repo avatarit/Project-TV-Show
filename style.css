@@ -1,269 +1,120 @@
-
-*{
-  box-sizing: border-box;
-}
-#root {
-  padding: 20px;
-  font-family: Arial, sans-serif;
-}
-
-.info-text {
-  font-size: 16px;
-  margin-bottom: 20px;
-}
-
-.episode-grid {
-  display: grid;
-  grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
-  gap: 20px;
+/* ---------- Base / variables ---------- */
+:root {
+  --bg: #ffffff;
+  --fg: #0f172a;             /* slate-900 */
+  --muted: #334155;          /* slate-700 */
+  --border: #e5e7eb;         /* slate-200 */
+  --card-bg: #ffffff;
+  --link: #0a58ca;           /* accessible blue */
+  --link-visited: #6f42c1;
+  --focus: #ffab00;          /* amber for high-contrast ring */
+  --accent: #f1f5f9;         /* slate-100 */
 }
 
-.episode-card {
-  background-color: #fff;
-  border: 1px solid #ddd;
+* { box-sizing: border-box; }
+html, body {
+  margin: 0;
+  padding: 0;
+  background: var(--bg);
+  color: var(--fg);
+  font: 16px/1.5 system-ui, -apple-system, Segoe UI, Roboto, "Helvetica Neue",
+        Noto Sans, "Liberation Sans", Arial, sans-serif, "Apple Color Emoji",
+        "Segoe UI Emoji";
+}
+
+/* ---------- Links: distinguishable and accessible ---------- */
+a {
+  color: var(--link);
+  text-decoration: underline;             /* fixes “links rely on color” */
+  text-underline-offset: 2px;
+}
+a:visited { color: var(--link-visited); }
+a:hover, a:focus { text-decoration-thickness: 2px; }
+
+/* Visible focus for all interactive elements */
+:focus-visible {
+  outline: 3px solid var(--focus);
+  outline-offset: 3px;
+}
+
+/* ---------- Layout ---------- */
+main { max-width: 1200px; margin: 0 auto; padding: 1rem; }
+.toolbar {
+  display: flex;
+  flex-wrap: wrap;
+  gap: .75rem 1rem;
+  align-items: center;
+  margin-bottom: 1rem;
+  background: var(--bg);
+  color: var(--fg);
+}
+.toolbar input[type="search"],
+.toolbar select {
+  border: 1px solid var(--border);
   border-radius: 8px;
-  padding: 15px;
-  box-shadow: 0 2px 8px rgba(0,0,0,0.1);
-  transition: transform 0.2s;
+  padding: .5rem .75rem;
+  min-width: 240px;
+}
+.counter { margin-left: auto; }
+
+.shows-grid, .episode-grid {
+  display: grid;
+  gap: 1rem;
+  grid-template-columns: repeat(auto-fill, minmax(230px, 1fr));
 }
 
-.episode-card:hover {
-  transform: translateY(-5px);
+/* Cards */
+.show-card, .episode-card {
+  background: var(--card-bg);
+  border: 1px solid var(--border);
+  border-radius: 12px;
+  padding: 12px;
 }
-
+.show-card h2,
 .episode-card h3 {
-  font-size: 16px;
-  margin-bottom: 10px;
-  color: #333;
+  margin: 0 0 .5rem 0;
+  font-size: 1.05rem;
 }
 
-.episode-card img {
+/* Image area: avoid CLS with a fixed aspect ratio box */
+.show-card img, .episode-card img {
+  display: block;
   width: 100%;
   height: auto;
-  border-radius: 4px;
-  margin-bottom: 10px;
-}
-
-.episode-card p {
-  font-size: 14px;
-  color: #555;
-  text-align: justify;
-  line-height: 1.5;
-}
-::placeholder {
-  color: rgba(0, 0, 0, 0.599);
-  font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
-  font-weight: 500;
-}
-/* search container */
-.searchContainer {
-  display: flex;
-  align-items: center;
-  justify-content:center;
-  gap: 15px;
-  background-color: #febfbf;
-  padding: 10px;
-  border-radius: 10px;
-  position: sticky;
-  top: 0;
-  z-index: 10;
-  margin:0 -7px ;
-  animation: curtainDrop 1s ease-out forwards;
-  transition: .3s;
-}
-@media (max-width:768px) {
-  .searchContainer {
-    flex-direction: column;
-  }
-}
-
-/* select bar  */
-.searchContainer #selectedepisode {
-  padding: 10px 15px;
-  font-size: 16px;
-  border: 1px solid #ccc;
-  border-radius: 6px;
-  background-color: #fff;
-  color: #333;
-  background-position: right 10px center;
-  background-size: 10px 5px;
-  cursor: pointer;
-  transition: border-color 0.5s ease;
-}
-
-option {
-  color: rgb(1, 54, 46);
-}
-.searchContainer #selectedepisode:focus {
-  outline: none;
-  border: #7ee4c4 2px solid;
-}
-
-/* Search bar  */
-.searchContainer #search {
-  padding: 15px;
-  width: 250px;
-  height: 40px;
-  border-radius: 5px;
-  border: none;
-  text-align: center;
-}
-
-.searchContainer #search:focus{
-  outline: none;
-  border: #7ee4c4 2px solid;
-  background-color: #ffffff;
-}
-.searchContainer p {
-  font-size: large;
-  border-bottom: 3px solid rgb(218, 123, 123) ;
-  cursor: pointer;
-}
-.searchContainer #manyEpisodes{
-  text-decoration: underline;
-}
-
-/* intro animation  */
-.hidden {
-  display: none !important;
-}
-
-.intro-animation {
-  position: fixed;
-  inset: 0;
-  background: #000;
-  z-index: 9999;
-  display: flex;
-  flex-direction: column;
-  justify-content: center;
-  align-items: center;
-  overflow: hidden;
-  color: #00ffe1;
-  font-family: 'Orbitron', sans-serif;
-}
-
-.core {
-  width: 48px;
-  height: 48px;
-  background: url(./favicon.ico) no-repeat;
-  box-shadow: 0 0 18px #00ffe1;
-  z-index: 2;
-  border-radius: 50%;
-}
-
-.particle {
-  width: 8px;
-  height: 8px;
-  background: #00ffe1;
-  position: absolute;
-  opacity: 0.8;
-  z-index: 1;
-  border-radius: 50%;
-  animation: assemble .800s ease-in forwards;
-}
-
-.p1 {
-  top: -100px;
-  left: 20%;
-  animation-delay: 0s;
-}
-
-.p2 {
-  top: 120%;
-  left: 30%;
-  animation-delay: 0.05s;
-}
-
-.p3 {
-  top: 50%;
-  left: -100px;
-  animation-delay: 0.1s;
-}
-
-.p4 {
-  top: 40%;
-  left: 120%;
-  animation-delay: 0.15s;
-}
-
-.p5 {
-  top: -80px;
-  left: 80%;
-  animation-delay: 0.1s;
-}
-
-.p6 {
-  top: 130%;
-  left: 70%;
-  animation-delay: 0.04s;
-}
-
-.p7 {
-  top: 10%;
-  left: -60px;
-  animation-delay: 0.2s;
-}
-
-.p8 {
-  top: 60%;
-  left: 130%;
-  animation-delay: 0.1s;
-}
-
-@keyframes assemble {
-  to {
-    top: 50%;
-    left: 50%;
-    transform: translate(-50%, -50%);
-    opacity: 1;
-  }
-}
-
-.intro-title {
-  font-size: 1.5rem;
-  letter-spacing: 0.12em;
-  margin-top: 30px;
-  opacity: 0;
-  animation: fadeInTitle .2s ease-in .8s forwards;
-}
-
-@keyframes fadeInTitle {
-  to {
-    opacity: 1;
-  }
-}
-/* no episode was found (not available) */
-#notAvailable {
-  display: none;
-  padding: 2rem;
-  margin-top: 2rem;
-  border: 2px dashed #ccc;
+  aspect-ratio: 210 / 295; /* TVMaze medium is typically 210x295 */
+  object-fit: cover;
   border-radius: 8px;
-  background-color: #f9f9f9;
-  text-align: center;
-  font-family: Arial, sans-serif;
-  color: #444;
-  animation: fadeIn 0.8s .2s ease-out forwards;
-  opacity: 0;
 }
 
-.notAvailable h2 {
-  font-size: 1.8rem;
-  color: #ffbfbf;
-  margin-bottom: 0.5rem;
+/* Back nav */
+.nav-back { margin: .5rem 0 1rem; }
+
+/* Alerts / helpers */
+.help-text { color: var(--muted); margin: 0; font-size: .875rem; }
+.no-js {
+  margin: 1rem 0;
+  padding: .75rem 1rem;
+  background: #fff3cd;
+  color: #664d03;
+  border: 1px solid #ffecb5;
+  border-radius: 8px;
 }
 
-@keyframes fadeIn {
-  from {
-    opacity: 0;
-    transform: translateY(20px);
-  }
-
-  to {
-    opacity: 1;
-    transform: translateY(0);
-  }
+/* Screen-reader only utility */
+.sr-only {
+  position: absolute; width: 1px; height: 1px; padding: 0; margin: -1px;
+  overflow: hidden; clip: rect(0 0 0 0); white-space: nowrap; border: 0;
 }
 
-/* test */
+/* Respect reduced motion */
+@media (prefers-reduced-motion: reduce) {
+  * { animation: none !important; transition: none !important; }
+}
 
+/* Optional intro animation minimal guard */
+.intro-animation { pointer-events: none; }
+
+/* Small devices */
+@media (max-width: 480px) {
+  .counter { width: 100%; order: 3; margin-left: 0; }
+}

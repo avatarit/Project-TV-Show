@@ -2,63 +2,156 @@
 <html lang="en">
   <head>
     <meta charset="UTF-8" />
-    <meta name="description" content="Author: A.N. Author,
-        Illustrator: P. Picture, Category: Books, Price: $17.99,
-        Length: 784 pages">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <meta
+      name="viewport"
+      content="width=device-width, initial-scale=1"
+    />
+    <meta name="color-scheme" content="light only" />
     <title>TV Show Project | Salah Ahmed (avatarit)</title>
-    <link href="style.css" rel="stylesheet" />
     <link rel="icon" href="/favicon.ico" type="image/x-icon" />
+
+    <!-- Perf: preconnect to data + image origins -->
+    <link rel="preconnect" href="https://api.tvmaze.com" crossorigin>
+    <link rel="preconnect" href="https://static.tvmaze.com" crossorigin>
+
+    <link rel="stylesheet" href="style.css" />
   </head>
 
   <body>
-    <div class="searchContainer" id="searchContainer">
-      <label for="selectedepisode"></label>
-      <select name="selectedepisode" id="selectedepisode">
-        <option value='default'>All Episodes</option>
-      </select>
-      <input  id="search" type="search"   placeholder="Search...">
-      <label for="search"></label>
-      <p title="  Search For Episodes 🔎">Displaying <span id="manyEpisodes"></span> of 73 Episodes</p>
-    </div>
-    <div id="root">
-    </div>
-<div class="notAvailable" id="notAvailable">
-  <h2>😕 Oops!</h2>
-  <p>We don't have this episode at the moment.</p>
-  <p>Please check back later or try searching for another one.</p>
-</div>
+    <a class="sr-only" href="#showsRoot">Skip to content</a>
 
-<!-- This is just the intro animation -->
-<div id="intro-animation" class="intro-animation">
-  <div class="core"></div>
-  <div class="particle p1"></div>
-  <div class="particle p2"></div>
-  <div class="particle p3"></div>
-  <div class="particle p4"></div>
-  <div class="particle p5"></div>
-  <div class="particle p6"></div>
-  <div class="particle p7"></div>
-  <div class="particle p8"></div>
-  <h1 class="intro-title">TVMaze STUDIOS</h1>
-</div>
+    <main id="app" role="main">
+      <!-- SHOWS VIEW (default) -->
+      <section id="showsView" aria-labelledby="showsHeading">
+        <h1 id="showsHeading" class="sr-only">TV Shows</h1>
 
+        <div class="toolbar">
+          <label for="showSearch" class="sr-only">Search shows</label>
+          <input
+            id="showSearch"
+            type="search"
+            placeholder="Search shows by name, genre, or summary…"
+            autocomplete="off"
+            aria-describedby="showsHelp"
+          />
+          <p id="showsHelp" class="help-text">
+            Type to filter the shows list.
+          </p>
 
-    <!-- Loads a provided function called getAllEpisodes() which returns all episodes -->
+          <p class="counter">
+            Showing
+            <span id="showCount" aria-live="polite">0</span>
+            of
+            <span id="showTotal" aria-live="polite">0</span>
+            shows
+          </p>
+
+          <!-- Reserve space to avoid CLS -->
+          <div class="status-row">
+            <div
+              id="loadingMessage"
+              role="status"
+              aria-live="polite"
+              aria-atomic="true"
+              style="display:none"
+            >
+              Loading…
+            </div>
+            <div
+              id="errorMessage"
+              role="alert"
+              aria-atomic="true"
+              style="display:none;color:#b00020"
+            ></div>
+          </div>
+        </div>
+
+        <!-- Removed role="list" -->
+        <div id="showsRoot" class="shows-grid"></div>
+      </section>
+
+      <!-- EPISODES VIEW -->
+      <section
+        id="episodesView"
+        style="display:none;"
+        aria-labelledby="episodesHeading"
+      >
+        <h2 id="episodesHeading" class="sr-only">Episodes</h2>
+
+        <nav class="nav-back" aria-label="Back">
+          <a href="#" id="backToShows" aria-label="Back to all shows">← All shows</a>
+        </nav>
+
+        <div class="toolbar" id="episodesToolbar">
+          <label for="episodeSelector" class="sr-only">Select episode</label>
+          <select id="episodeSelector">
+            <option value="all">All Episodes</option>
+          </select>
+
+          <label for="episodeSearch" class="sr-only">Search episodes</label>
+          <input
+            id="episodeSearch"
+            type="search"
+            placeholder="Search episodes…"
+            autocomplete="off"
+          />
+
+          <p class="counter">
+            Displaying
+            <span id="manyEpisodes" aria-live="polite">0</span>
+            of
+            <span id="totalEpisodes" aria-live="polite">0</span>
+            episodes
+          </p>
+        </div>
+
+        <!-- Removed role="list" -->
+        <div id="episodesRoot" class="episode-grid"></div>
+
+        <div
+          class="notAvailable"
+          id="notAvailable"
+          role="status"
+          aria-live="polite"
+          style="display:none;"
+        >
+          <h3>😕 Oops!</h3>
+          <p>No episodes match your filters.</p>
+        </div>
+      </section>
+
+      <!-- Optional intro animation -->
+      <div id="intro-animation" class="intro-animation" style="display:none;">
+        <div class="core"></div>
+        <div class="particle p1"></div>
+        <div class="particle p2"></div>
+        <div class="particle p3"></div>
+        <div class="particle p4"></div>
+        <div class="particle p5"></div>
+        <div class="particle p6"></div>
+        <div class="particle p7"></div>
+        <div class="particle p8"></div>
+        <h2 class="intro-title">TVMaze STUDIOS</h2>
+      </div>
+    </main>
+
+    <noscript>
+      <p class="no-js">
+        This app needs JavaScript to load shows and episodes.
+      </p>
+    </noscript>
+
+    <script src="script.js" defer></script>
+
     <footer>
       <p>
-        The data has (originally) come from
-        <a href="https://tvmaze.com/" target="_blank">TVMaze.com</a>,
-        and link back to that site (or the specific episode on that site).
-        See the licensing details at
-        <a href="https://www.tvmaze.com/api#licensing" target="_blank">
+        Data originally from
+        <a href="https://www.tvmaze.com" target="_blank" rel="noopener">TVMaze.com</a>.
+        See licensing at
+        <a href="https://www.tvmaze.com/api#licensing" target="_blank" rel="noopener">
           tvmaze.com/api#licensing
         </a>.
       </p>
     </footer>
-    <script src="episodes.js"></script>
-
-    <!-- Loads YOUR javascript code -->
-    <script src="script.js"></script>
   </body>
 </html>
